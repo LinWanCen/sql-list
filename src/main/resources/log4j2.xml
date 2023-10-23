@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" monitorInterval="30">
+
+  <Properties>
+    <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss.SSS}\t%level\t%thread\t%X{progress}\t|\t%msg%n</Property>
+    <Property name="dataPattern">%msg%n</Property>
+    <Property name="linkPattern">%d{yyyy-MM-dd HH:mm:ss.SSS}\t%level\t%thread\t(%F:%L)\t%X{progress}\t|\t%msg%n</Property>
+    <!-- 不放进 target 避免被 mvn clean 清除 -->
+    <Property name="baseDir">logs</Property>
+    <Property name="prefix">${baseDir}/$${date:yyyy-MM}/$${date:yyyy-MM-dd}</Property>
+    <Property name="suffix">%d{yyyy-MM-dd}.%i.log.gz</Property>
+  </Properties>
+
+  <Appenders>
+
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="${pattern}" charset="UTF-8"/>
+    </Console>
+
+    <Console name="DataConsole" target="SYSTEM_OUT">
+      <PatternLayout pattern="${dataPattern}" charset="UTF-8"/>
+    </Console>
+
+    <Console name="LinkConsole" target="SYSTEM_OUT">
+      <PatternLayout pattern="${linkPattern}" charset="UTF-8"/>
+    </Console>
+
+  </Appenders>
+
+
+  <Loggers>
+
+    <!-- info 打印命令 -->
+    <!-- debug 打印工作目录 -->
+    <!-- trace 打印命令执行日志 -->
+    <AsyncLogger name="io.github.linwancen.util.CmdUtils" level="warn"/>
+
+    <AsyncRoot level="info" includeLocation="true">
+      <AppenderRef ref="LinkConsole"/>
+    </AsyncRoot>
+
+  </Loggers>
+
+</Configuration>
