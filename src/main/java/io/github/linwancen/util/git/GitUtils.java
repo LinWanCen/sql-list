@@ -50,7 +50,11 @@ public class GitUtils {
         String gitPath = gitRoot.getAbsolutePath();
         String subPath = path.substring(gitPath.length() + 1).replace('\\', '/');
         String cmd = "git blame -w -L" + start + "," + endLine + " " + subPath;
-        CmdUtils.execOut(cmd, gitRoot, 60 * 1000, func);
+        CmdUtils.exec(cmd, gitRoot, 60 * 1000, func, errMsg -> {
+            if (!errMsg.isEmpty() && !errMsg.contains("no such ref")) {
+                LOG.warn("cmd err:{}\n{}", errMsg, cmd);
+            }
+        });
     }
 
     public static List<File> diff(String startToEnd, String gitPath, File gitRoot) {

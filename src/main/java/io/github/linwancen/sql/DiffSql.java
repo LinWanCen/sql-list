@@ -24,12 +24,12 @@ public class DiffSql {
         int i2 = args[2].lastIndexOf('.');
         String dir1 = i1 > 0 ? args[1].substring(0, i1) : args[1];
         String dir2 = i2 > 0 ? args[2].substring(0, i2) : args[2];
-        diffDir(dbType, fun, dir1, dir2);
+        diffDir(dbType, new File(dir1), new File(dir2), fun);
     }
 
-    public static void diffDir(DbType dbType, Consumer<List<SqlInfo>> fun, String dir1, String dir2) {
-        List<SqlInfo> oldList = AllParser.parse(Collections.singletonList(new File(dir1)), dbType, null);
-        List<SqlInfo> newList = AllParser.parse(Collections.singletonList(new File(dir2)), dbType, null);
+    public static void diffDir(DbType dbType, File file1, File file2, Consumer<List<SqlInfo>> fun) {
+        List<SqlInfo> oldList = AllParser.parse(Collections.singletonList(file1), dbType, null);
+        List<SqlInfo> newList = AllParser.parse(Collections.singletonList(file2), dbType, null);
         Map<String, SqlInfo> oldMap = toIdMap(oldList);
         // delete duplicate
         Map<String, SqlInfo> newMap = toIdMap(newList);

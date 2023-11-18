@@ -33,16 +33,25 @@ public class CmdUtils {
         return exec(cmd, null, timeout, fun);
     }
 
+
     public static int execOut(String cmd, File workingDirectory, int timeout,
-                           Consumer<String> fun) {
+                              Consumer<String> outFun) {
+        return exec(cmd, workingDirectory, timeout, outFun, errMsg -> {
+            if (!errMsg.isEmpty()) {
+                LOG.warn("cmd err:{}\n{}", errMsg, cmd);
+            }
+        });
+    }
+
+    public static int exec(String cmd, File workingDirectory, int timeout,
+                           Consumer<String> outFun, Consumer<String> errFun) {
         return exec(cmd, workingDirectory, timeout, (out, err) -> {
             try {
-                String errMsg = err.toString("UTF-8");
-                if (!errMsg.isEmpty()) {
-                    LOG.warn("cmd err:{}\n{}", err, cmd);
+                if (errFun != null) {
+                    errFun.accept(err.toString("UTF-8"));
                 }
-                if (fun != null) {
-                    fun.accept(out.toString("UTF-8"));
+                if (outFun != null) {
+                    outFun.accept(out.toString("UTF-8"));
                 }
             } catch (UnsupportedEncodingException e) {
                 LOG.warn("toString(\"UTF-8\") fail:\n{}\n", cmd, e);

@@ -26,11 +26,11 @@ public class Main {
         String name = EnvUtils.get("dbType", null, "mysql");
         DbType dbType = DbType.of(name);
 
-        WriteSheet cmd = EasyExcelFactory.writerSheet("cmd").build();
-        WriteSheet sql = ExcelUtils.sheet("sql", SqlInfo.class);
         ExcelUtils.write("out/sql-list", excelWriter -> {
+            WriteSheet sql = ExcelUtils.sheet("sql", SqlInfo.class);
             forArgs(args, dbType, sqlInfo -> excelWriter.write(sqlInfo, sql));
 
+            WriteSheet cmd = EasyExcelFactory.writerSheet("cmd").build();
             List<String> line = Collections.singletonList(String.join(" ", args));
             List<List<String>> data = Collections.singletonList(line);
             excelWriter.write(data, cmd);

@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class PathUtils {
-
-    @SuppressWarnings("ConstantConditions")
-    public static final String CLASS_PATH = PathUtils.class.getResource("/").getPath();
     private static final Logger LOG = LoggerFactory.getLogger(PathUtils.class);
 
     private PathUtils() {}
