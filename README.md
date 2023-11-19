@@ -25,8 +25,9 @@ Export Mapper.xml SQL to Excel.
 
 ## How to Use
 
-- Select dir and right-click<kbd>Export Mapper.xml SQL</kbd>
-- Select two dir and right-click<kbd>Export Mapper.xml diff SQL</kbd>
+- Select dir and right-click <kbd>Export Mapper.xml SQL</kbd>
+- Select two dir and right-click <kbd>Export Mapper.xml diff SQL</kbd>
+- Default MySQL, can set env: dbType=oracle and restart IDE (com.alibaba.druid.DbType)
 
 ## My Plugin
 - Show doc comment at the Project view Tree, line End, json etc.: [Show Comment]
@@ -42,10 +43,10 @@ Export Mapper.xml SQL to Excel.
 
 ## 用法
 
-- 选择多个目录右键点击<kbd>导出 Mapper.xml 的 SQL</kbd>
-- 选择两个目录右键点击<kbd>导出 Mapper.xml 差异的 SQL</kbd>
-
-在服务器中用 Jenkins 运行详见 [Jenkins 使用方式指南][Jenkins]。
+- 选择多个目录右键点击 <kbd>导出 Mapper.xml 的 SQL</kbd>
+- 选择两个目录右键点击 <kbd>导出 Mapper.xml 差异的 SQL</kbd>
+- 默认 MySQL，可以设置环境变量 dbType 的值，全小写，参考 com.alibaba.druid.DbType
+- 在服务器中用 Jenkins 运行详见 [Jenkins 使用方式指南][Jenkins]。
 
 ## 我的项目
 - 在文件树、行末、JSON 显示注释：[Show Comment]

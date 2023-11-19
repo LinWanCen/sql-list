@@ -12,8 +12,8 @@
         <action
             id="com.github.linwancen.plugin.sql.action.SqlList"
             class="com.github.linwancen.plugin.sql.action.SqlList"
-            icon="AllIcons.FileTypes.Archive"
-            text="SQL List">
+            icon="AllIcons.Providers.Mysql"
+            text="Export SQL">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CompareTwoFiles"/>
         </action>
     </actions>

@@ -41,7 +41,9 @@ object SqlList : AnAction() {
             object : Task.Backgroundable(project, "Delete same") {
                 override fun run(indicator: ProgressIndicator) {
                     GitUtils.utf8()
-                    val name = EnvUtils.get("dbType", null, "mysql")
+                    // 可以通过可选加载注入当前项目的方言类型方便用户使用
+                    val defaultType = "mysql"
+                    val name = EnvUtils.get("dbType", null, defaultType)
                     val dbType = DbType.of(name)
                     if (files.isEmpty()) {
                         return
