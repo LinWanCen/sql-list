@@ -43,7 +43,7 @@ public class GitUtils {
 
     public static void blame(File gitRoot, File file, int start, int endLine,
                              Consumer<String> func) {
-        if (gitRoot == null) {
+        if (gitRoot == null || start == 0 || endLine == 0) {
             return;
         }
         String path = file.getAbsolutePath();

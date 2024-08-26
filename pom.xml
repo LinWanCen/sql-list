@@ -15,14 +15,21 @@
     <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>jdom2</artifactId>
-      <version>2.0.6</version>
+      <version>2.0.6.1</version>
     </dependency>
 
-    <!-- MyBatis SQL 解析 -->
+    <!-- MyBatis XML 解析 -->
     <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>druid</artifactId>
-      <version>1.2.20</version>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis</artifactId>
+      <version>3.5.16</version>
+    </dependency>
+
+    <!-- SQL 解析 (5.0以上不支持 Java 8) -->
+    <dependency>
+      <groupId>com.github.jsqlparser</groupId>
+      <artifactId>jsqlparser</artifactId>
+      <version>4.9</version>
     </dependency>
 
     <!-- 执行命令行 -->
@@ -181,7 +188,7 @@
                 </copy>
                 <zip destfile="${project.build.directory}/${project.artifactId}.zip">
                   <fileset dir="${project.basedir}/">
-                    <include name="README.md"/>
+                    <include name="*.md"/>
                   </fileset>
                   <fileset dir="${project.build.directory}/">
                     <include name="lib/"/>
@@ -202,5 +209,12 @@
 
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>maven_central</id>
+      <name>Maven Central</name>
+      <url>https://repo.maven.apache.org/maven2/</url>
+    </repository>
+  </repositories>
 
 </project>

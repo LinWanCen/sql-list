@@ -13,7 +13,14 @@
             id="com.github.linwancen.plugin.sql.action.SqlList"
             class="com.github.linwancen.plugin.sql.action.SqlList"
             icon="AllIcons.Providers.Mysql"
-            text="Export SQL">
+            text="Export MyBaits *.xml SQL">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CompareTwoFiles"/>
+        </action>
+        <action
+            id="com.github.linwancen.plugin.sql.action.SqlListGit"
+            class="com.github.linwancen.plugin.sql.action.SqlListGit"
+            icon="AllIcons.Providers.Mysql"
+            text="Export MyBaits *.xml SQL With Git Author. Slow!">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CompareTwoFiles"/>
         </action>
     </actions>

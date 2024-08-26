@@ -8,22 +8,40 @@ import com.alibaba.excel.enums.BooleanEnum;
 import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @HeadStyle(wrapped = BooleanEnum.FALSE, horizontalAlignment = HorizontalAlignmentEnum.LEFT)
 @HeadFontStyle(fontHeightInPoints = 11, bold = BooleanEnum.FALSE, fontName="宋体")
 public class SqlInfo {
+    @SuppressWarnings("FieldCanBeLocal")
+    private String fullId;
     private String namespace;
-    private String type;
     private String id;
+    private String type;
     private String parameterType;
     private String resultMap;
     @ColumnWidth(40)
     private String sql;
+    /** TableName, TableExcelLine */
+    @ExcelIgnore
+    private final LinkedHashMap<String, TableColumn> tableMap = new LinkedHashMap<>();
+    @SuppressWarnings("FieldCanBeLocal")
     @ColumnWidth(25)
     private String table;
-    private String where;
+    /** ColumnName, ColumnExcelLine */
+    @ExcelIgnore
+    private final List<TreeMap<String, TableColumn>> columnList = new ArrayList<>();
+    @SuppressWarnings("FieldCanBeLocal")
+    private String column;
+    /** gitRootInfo.startDate != null && gitRootInfo.endDate != null */
     private Date inDate;
     @ExcelIgnore
     private GitRootInfo gitRootInfo;
@@ -36,7 +54,20 @@ public class SqlInfo {
     private Date lastDate;
     @ColumnWidth(16)
     private String lastAuthor;
+    @SuppressWarnings("FieldCanBeLocal")
     private String link;
+    private String xmlErr;
+    private String sqlErr;
+    @ExcelIgnore
+    private final Map<String, String> aliasMap = new HashMap<>();
+
+    public String getFullId() {
+        return namespace + "." + id;
+    }
+
+    public void setFullId(String fullId) {
+        this.fullId = fullId;
+    }
 
     public String getNamespace() {
         return namespace;
@@ -46,20 +77,20 @@ public class SqlInfo {
         this.namespace = namespace;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getParameterType() {
@@ -86,20 +117,23 @@ public class SqlInfo {
         this.sql = sql;
     }
 
+    public LinkedHashMap<String, TableColumn> getTableMap() {
+        return tableMap;
+    }
+
     public String getTable() {
-        return table;
+        return String.join(", ", tableMap.keySet());
     }
 
-    public void setTable(String table) {
-        this.table = table;
+    public List<TreeMap<String, TableColumn>> getColumnList() {
+        return columnList;
     }
 
-    public String getWhere() {
-        return where;
-    }
-
-    public void setWhere(String where) {
-        this.where = where;
+    public String getColumn() {
+        return columnList.stream()
+                .filter(map -> !map.isEmpty())
+                .map(map -> String.join(", ", map.keySet()))
+                .collect(Collectors.joining("\n"));
     }
 
     public Date getInDate() {
@@ -171,7 +205,23 @@ public class SqlInfo {
         return fileName + ":" + startLine;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public String getXmlErr() {
+        return xmlErr;
+    }
+
+    public void setXmlErr(String xmlErr) {
+        this.xmlErr = xmlErr;
+    }
+
+    public String getSqlErr() {
+        return sqlErr;
+    }
+
+    public void setSqlErr(String sqlErr) {
+        this.sqlErr = sqlErr;
+    }
+
+    public Map<String, String> getAliasMap() {
+        return aliasMap;
     }
 }

@@ -1,6 +1,5 @@
 package io.github.linwancen.sql;
 
-import com.alibaba.druid.DbType;
 import io.github.linwancen.sql.bean.SqlInfo;
 import io.github.linwancen.sql.parser.AllParser;
 import org.slf4j.Logger;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 public class DiffSql {
     private static final Logger LOG = LoggerFactory.getLogger(DiffSql.class);
 
-    public static void diff(String[] args, DbType dbType, Consumer<List<SqlInfo>> fun) {
+    public static void diff(String[] args, Consumer<List<SqlInfo>> fun, boolean git) {
         if (args.length < 3) {
             return;
         }
@@ -24,12 +23,12 @@ public class DiffSql {
         int i2 = args[2].lastIndexOf('.');
         String dir1 = i1 > 0 ? args[1].substring(0, i1) : args[1];
         String dir2 = i2 > 0 ? args[2].substring(0, i2) : args[2];
-        diffDir(dbType, new File(dir1), new File(dir2), fun);
+        diffDir(new File(dir1), new File(dir2), git, fun);
     }
 
-    public static void diffDir(DbType dbType, File file1, File file2, Consumer<List<SqlInfo>> fun) {
-        List<SqlInfo> oldList = AllParser.parse(Collections.singletonList(file1), dbType, null);
-        List<SqlInfo> newList = AllParser.parse(Collections.singletonList(file2), dbType, null);
+    public static void diffDir(File file1, File file2, boolean git, Consumer<List<SqlInfo>> fun) {
+        List<SqlInfo> oldList = AllParser.parse(Collections.singletonList(file1), null, git);
+        List<SqlInfo> newList = AllParser.parse(Collections.singletonList(file2), null, git);
         Map<String, SqlInfo> oldMap = toIdMap(oldList);
         // delete duplicate
         Map<String, SqlInfo> newMap = toIdMap(newList);

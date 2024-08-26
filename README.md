@@ -19,23 +19,22 @@
 
 <!-- Plugin description -->
 
-Export Mapper.xml SQL to Excel.
+Check and export MyBatis *.xml SQL to Excel With Git Author.
 
-解析 Mapper.xml 中的 SQL，涉及的表和条件列，Git 最后修改时间和作者，生成 Excel 表格。
+检查 Mybatis *.xml 中的 SQL，涉及的表和条件列，Git 最后修改时间和作者，生成 Excel 表格。
 
 ## How to Use
 
-- Select dir and right-click <kbd>Export Mapper.xml SQL</kbd>
-- Select two dir and right-click <kbd>Export Mapper.xml diff SQL</kbd>
-- Default MySQL, can set env: dbType=oracle and restart IDE (com.alibaba.druid.DbType)
+- Select dir and right-click <kbd>Export MyBatis *.xml SQL</kbd>
+- Select two dir and right-click <kbd>Export Mybatis *.xml diff SQL</kbd>
 
 ## My Plugin
-- Show doc comment at the Project view Tree, line End, json etc.: [Show Comment]
+- Show doc comment in the Project view Tree, line End, JSON etc.: [Show Comment]
 - Method call usage graph and maven dependency graph: [Draw Graph]
 - Find author/comment of multiple files or lines and export Find: [Find Author]
 - Auto sync coverage and capture coverage during debug: [Sync Coverage]
 - UnCompress and Delete same, use `javap -c` decompile class: [Compare Jar]
-- Export Mapper.xml SQL to Excel: [SQL List]
+- Check and export MyBatis *.xml SQL to Excel With Git Author: [SQL List]
 
 ---
 
@@ -43,9 +42,8 @@ Export Mapper.xml SQL to Excel.
 
 ## 用法
 
-- 选择多个目录右键点击 <kbd>导出 Mapper.xml 的 SQL</kbd>
-- 选择两个目录右键点击 <kbd>导出 Mapper.xml 差异的 SQL</kbd>
-- 默认 MySQL，可以设置环境变量 dbType 的值，全小写，参考 com.alibaba.druid.DbType
+- 选择多个目录右键点击 <kbd>导出 Mybatis *.xml 的 SQL</kbd>
+- 选择两个目录右键点击 <kbd>导出 MyBatis *.xml 差异的 SQL</kbd>
 - 在服务器中用 Jenkins 运行详见 [Jenkins 使用方式指南][Jenkins]。
 
 ## 我的项目
@@ -54,7 +52,7 @@ Export Mapper.xml SQL to Excel.
 - 查找多个文件或行的作者 与 导出搜索：[Find Author]
 - 自动同步覆盖率 和 调试中抓取覆盖率：[Sync Coverage]
 - 逐层解压，删除相同文件，反编译 class 对比：[Compare Jar]
-- 解析 Mapper.xml 中的 SQL，涉及的表和条件列，Git 最后修改时间和作者，生成 Excel 表格：[SQL List]
+- 检查 Mybatis *.xml 中的 SQL，涉及的表和条件列，Git 最后修改时间和作者，生成 Excel 表格：[SQL List]
 
 ---
 
@@ -63,13 +61,13 @@ Export Mapper.xml SQL to Excel.
 如果对你有所帮助，别忘了给 [本项目 GitHub 主页][GitHub] 一个 Star，您的支持是项目前进的动力。
 
 [Show Comment]: https://plugins.jetbrains.com/plugin/18553-show-comment
-[Draw Graph]: https://plugins.jetbrains.com/plugin/draw-graph
+[Draw Graph]: https://plugins.jetbrains.com/plugin/21242-draw-graph
 [Find Author]: https://plugins.jetbrains.com/plugin/20557-find-author
 [Sync Coverage]: https://plugins.jetbrains.com/plugin/20780-sync-coverage
 [Compare Jar]: https://plugins.jetbrains.com/plugin/22356-compare-jar
 [SQL List]: https://plugins.jetbrains.com/plugin/23142-sql-list
 [GitHub]: https://github.com/LinWanCen/sql-list
-[Jenkins]: https://github.com/LinWanCen/sql-list/Jenkins.md
+[Jenkins]: https://github.com/LinWanCen/sql-list/blob/main/Jenkins.md
 
 <!-- Plugin description end -->
 

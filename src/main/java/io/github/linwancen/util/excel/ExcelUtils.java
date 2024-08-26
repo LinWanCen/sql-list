@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.function.Consumer;
 
@@ -25,11 +26,13 @@ public class ExcelUtils {
         LOG.info("Excel：\tfile:///{}", path);
     }
 
-    public static <T> WriteSheet sheet(String sheetName, Class<T> clazz) {
-        return EasyExcelFactory
+    public static <T> WriteSheet sheet(ExcelWriter excelWriter, String sheetName, Class<T> clazz) {
+        WriteSheet sheet = EasyExcelFactory
                 .writerSheet(sheetName)
                 .head(clazz)
                 .registerWriteHandler(new FreezeAndFilter())
                 .build();
+        excelWriter.write(Collections.emptyList(), sheet);
+        return sheet;
     }
 }

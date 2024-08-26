@@ -25,12 +25,12 @@ repositories {
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
 //    implementation(libs.annotations)
-   implementation("org.apache.commons:commons-exec:1.3")
-   implementation("com.alibaba:druid:1.2.20")
-   implementation("com.alibaba:easyexcel:3.3.2")
-   implementation("org.jdom:jdom2:2.0.6")
-   implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.0")
-   implementation("com.lmax:disruptor:3.4.4")
+    implementation("org.jdom:jdom2:2.0.6.1")
+    implementation("org.mybatis:mybatis:3.5.16")
+    implementation("com.github.jsqlparser:jsqlparser:4.9")
+    implementation("org.apache.commons:commons-exec:1.3")
+    implementation("com.alibaba:easyexcel:3.3.2")
+    implementation("org.slf4j:slf4j-api:2.0.16")
 }
 
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.

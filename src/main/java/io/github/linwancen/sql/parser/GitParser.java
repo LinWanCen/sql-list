@@ -5,6 +5,7 @@ import io.github.linwancen.util.git.GitUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -13,9 +14,11 @@ public class GitParser {
     private static final Logger LOG = LoggerFactory.getLogger(GitParser.class);
 
     public static void parseLast(SqlInfo sqlInfo) {
-        int start = sqlInfo.getStartLine();
-        int endLine = sqlInfo.getEndLine();
-        GitUtils.blame(sqlInfo.getGitRootInfo().getGitRoot(), sqlInfo.getFile(), start, endLine, out -> {
+        File gitRoot = sqlInfo.getGitRootInfo().getGitRoot();
+        if (sqlInfo.getLastDate() != null) {
+            return;
+        }
+        GitUtils.blame(gitRoot, sqlInfo.getFile(), sqlInfo.getStartLine(), sqlInfo.getEndLine(), out -> {
             try {
                 Matcher m = GitUtils.BLAME_PATTERN.matcher(out);
                 while (m.find()) {
