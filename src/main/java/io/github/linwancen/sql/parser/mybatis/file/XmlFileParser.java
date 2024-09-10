@@ -31,13 +31,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class XmlFileParser {
     private static final Logger LOG = LoggerFactory.getLogger(XmlFileParser.class);
     private static final XMLMapperEntityResolver MAPPER_ENTITY_RESOLVER = new XMLMapperEntityResolver();
-    private static final Pattern SQL_TYPE_PATTERN = Pattern.compile("select|update|insert|delete");
+    public static final Pattern SQL_TYPE_PATTERN = Pattern.compile("select|update|insert|delete");
 
     public final Configuration configuration;
     public final File file;
@@ -74,7 +74,8 @@ public class XmlFileParser {
         XPathParser xPath;
         try {
             xPath = new XPathParser(fis, false, new Properties(), MAPPER_ENTITY_RESOLVER);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
+            // Ignore Exception when is not MyBatis *.xml and return null
             xPathParser = null;
             mapper = null;
             namespace = null;
@@ -148,7 +149,7 @@ public class XmlFileParser {
         }
     }
 
-    public void parserSql(Consumer<SqlInfo> fun) {
+    public void parserSql(Function<SqlInfo, Boolean> fun) {
         List<XNode> sqlList;
         try {
             sqlList = mapper.evalNodes("select|update|insert|delete");
@@ -193,7 +194,9 @@ public class XmlFileParser {
                 LOG.warn(msg);
             }
             try {
-                fun.accept(sqlInfo);
+                if (!fun.apply(sqlInfo)) {
+                    break;
+                }
             } catch (Exception e) {
                 String msg = SqlInfoLog.msg("parserSql fun.accept", sqlInfo, e, true);
                 LOG.warn(msg);

@@ -3,12 +3,13 @@ package com.github.linwancen.plugin.sql.action
 import com.alibaba.excel.EasyExcelFactory
 import com.alibaba.excel.ExcelWriter
 import com.github.linwancen.plugin.compare.ui.I18n
-import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.ide.actions.CopyAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.vfs.newvfs.RefreshQueue
+import com.intellij.openapi.wm.WindowManager
 import io.github.linwancen.sql.DiffSql
 import io.github.linwancen.sql.bean.SqlInfo
 import io.github.linwancen.sql.bean.TableColumn
@@ -19,7 +20,7 @@ import io.github.linwancen.util.git.GitUtils
 import java.io.File
 
 
-open class SqlList : AnAction() {
+open class SqlList : CopyAction() {
 
     override fun update(e: AnActionEvent) {
         val files = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
@@ -31,7 +32,7 @@ open class SqlList : AnAction() {
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        actionPerformedGit(e, false);
+        actionPerformedGit(e, false)
     }
 
     fun actionPerformedGit(e: AnActionEvent, git: Boolean) {
@@ -48,11 +49,12 @@ open class SqlList : AnAction() {
                 } else {
                     files[0].parent ?: return
                 }
-                ExcelUtils.write("${dir.canonicalPath ?: return}/sql-list") { excelWriter: ExcelWriter ->
+                val sqlListDir = "${dir.canonicalPath ?: return}/sql-list"
+                val path = ExcelUtils.write(sqlListDir) { excelWriter: ExcelWriter ->
                     val sql = ExcelUtils.sheet(excelWriter, "sql", SqlInfo::class.java)
                     val table = ExcelUtils.sheet(excelWriter, "table", TableColumn::class.java)
                     val column = ExcelUtils.sheet(excelWriter, "column", TableColumn::class.java)
-                    val fileList = files.map { File(it.path) }.toList()
+                    val fileList = files.mapNotNull { it.canonicalPath?.let { s -> File(s) } }.toList()
                     if (files.size == 2) {
                         DiffSql.diffDir(fileList[0], fileList[1], false)
                         { sqlInfo: List<SqlInfo?>? -> SqlInfoWriter.write(excelWriter, sqlInfo, sql, table, column) }
@@ -61,11 +63,12 @@ open class SqlList : AnAction() {
                         SqlInfoWriter.write(excelWriter, sqlInfos, sql, table, column)
                     }
 
-                    val data = files.map { listOf(it.path) }.toList()
+                    val data = files.mapNotNull { it.canonicalPath?.let { s -> listOf(s) } }.toList()
                     val cmd = EasyExcelFactory.writerSheet("cmd").build()
                     excelWriter.write(data, cmd)
                 }
                 RefreshQueue.getInstance().refresh(true, false, null, dir)
+                WindowManager.getInstance()?.getStatusBar(project)?.info = "Export SQL $path"
             }
         }.queue()
     }

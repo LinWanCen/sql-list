@@ -23,7 +23,7 @@ public class AllParser {
 
         List<File> mapperFileList = MapperFileFinder.findMapperFileList(files);
         LOG.info("mapperList size {}", mapperFileList.size());
-        new MyBatisParser().parser(mapperFileList, gitRootInfo, sqlInfoList);
+        new MyBatisParser().parser(mapperFileList, gitRootInfo, sqlInfoList::add);
         long t2 = System.currentTimeMillis();
         LOG.info("sql size {}", sqlInfoList.size());
         LOG.info("MyBatisParser use {}", TimeUtils.useTime(t2 - t1));

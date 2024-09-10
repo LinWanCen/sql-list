@@ -27,6 +27,7 @@ Check and export MyBatis *.xml SQL to Excel With Git Author.
 
 - Select dir and right-click <kbd>Export MyBatis *.xml SQL</kbd>
 - Select two dir and right-click <kbd>Export Mybatis *.xml diff SQL</kbd>
+- Select MyBatis *.xml SQL and right-click <kbd>Copy MyBatis *.xml SQL</kbd>
 
 ## My Plugin
 - Show doc comment in the Project view Tree, line End, JSON etc.: [Show Comment]
@@ -43,6 +44,7 @@ Check and export MyBatis *.xml SQL to Excel With Git Author.
 ## 用法
 
 - 选择多个目录右键点击 <kbd>导出 Mybatis *.xml 的 SQL</kbd>
+- 选择SQL文本右键点击 <kbd>复制 Mybatis *.xml 的 SQL</kbd>
 - 选择两个目录右键点击 <kbd>导出 MyBatis *.xml 差异的 SQL</kbd>
 - 在服务器中用 Jenkins 运行详见 [Jenkins 使用方式指南][Jenkins]。
 
@@ -94,4 +96,3 @@ Plugin based on the [IntelliJ Platform Plugin Template][template].
 
 ## TODO
 
-Jdom 解析标签文本无法获取所有文本，SQL 不完整，目前采用正则处理

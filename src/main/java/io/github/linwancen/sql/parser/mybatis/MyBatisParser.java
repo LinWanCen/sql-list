@@ -8,12 +8,13 @@ import org.apache.ibatis.session.Configuration;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MyBatisParser {
     public final Configuration configuration = new Configuration();
 
-    public void parser(List<File> mapperFileList, GitRootInfo gitRootInfo, List<SqlInfo> sqlInfoList) {
+    public void parser(List<File> mapperFileList, GitRootInfo gitRootInfo, Function<SqlInfo, Boolean> fun) {
         List<XmlFileParser> list = mapperFileList.stream()
                 .parallel()
                 .map(file -> XmlFileParser.build(configuration, file, gitRootInfo))
@@ -21,6 +22,6 @@ public class MyBatisParser {
                 .collect(Collectors.toList());
         list.parallelStream().forEach(XmlFileParser::parserSqlFragments);
         // list.add() not parallel
-        list.forEach(e -> e.parserSql(sqlInfoList::add));
+        list.forEach(e -> e.parserSql(fun));
     }
 }

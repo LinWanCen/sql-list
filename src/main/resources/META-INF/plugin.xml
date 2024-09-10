@@ -10,6 +10,13 @@
 
     <actions>
         <action
+            id="com.github.linwancen.plugin.sql.action.SqlCopy"
+            class="com.github.linwancen.plugin.sql.action.SqlCopy"
+            icon="AllIcons.Providers.Mysql"
+            text="Copy MyBaits *.xml SQL">
+            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="CopyGroup"/>
+        </action>
+        <action
             id="com.github.linwancen.plugin.sql.action.SqlList"
             class="com.github.linwancen.plugin.sql.action.SqlList"
             icon="AllIcons.Providers.Mysql"

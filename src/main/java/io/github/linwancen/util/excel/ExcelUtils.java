@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 public class ExcelUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ExcelUtils.class);
-    public static void write(String outName, Consumer<ExcelWriter> fun) {
+    public static String write(String outName, Consumer<ExcelWriter> fun) {
         SimpleDateFormat sdf = new SimpleDateFormat("_yyyy-MM-dd_HH.mm.ss");
         File outFile = new File(outName + sdf.format(new Date()) + ".xlsx");
         PathUtils.mkdir(outFile.getParentFile());
@@ -24,6 +24,7 @@ public class ExcelUtils {
         }
         String path = outFile.getAbsolutePath().replace('\\', '/');
         LOG.info("Excel：\tfile:///{}", path);
+        return path;
     }
 
     public static <T> WriteSheet sheet(ExcelWriter excelWriter, String sheetName, Class<T> clazz) {
