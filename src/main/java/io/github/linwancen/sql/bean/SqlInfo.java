@@ -11,9 +11,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class SqlInfo {
     private String sql;
     /** TableName, TableExcelLine */
     @ExcelIgnore
-    private final LinkedHashMap<String, TableColumn> tableMap = new LinkedHashMap<>();
+    private final TreeMap<String, TableColumn> tableMap = new TreeMap<>();
     @SuppressWarnings("FieldCanBeLocal")
     @ColumnWidth(25)
     private String table;
@@ -41,6 +42,9 @@ public class SqlInfo {
     private final List<TreeMap<String, TableColumn>> columnList = new ArrayList<>();
     @SuppressWarnings("FieldCanBeLocal")
     private String column;
+    /** tableName.Column ---  */
+    @ExcelIgnore
+    private final Set<List<String>> columnRel = new HashSet<>();
     /** gitRootInfo.startDate != null && gitRootInfo.endDate != null */
     private Date inDate;
     @ExcelIgnore
@@ -117,7 +121,7 @@ public class SqlInfo {
         this.sql = sql;
     }
 
-    public LinkedHashMap<String, TableColumn> getTableMap() {
+    public TreeMap<String, TableColumn> getTableMap() {
         return tableMap;
     }
 
@@ -134,6 +138,10 @@ public class SqlInfo {
                 .filter(map -> !map.isEmpty())
                 .map(map -> String.join(", ", map.keySet()))
                 .collect(Collectors.joining("\n"));
+    }
+
+    public Set<List<String>> getColumnRel() {
+        return columnRel;
     }
 
     public Date getInDate() {

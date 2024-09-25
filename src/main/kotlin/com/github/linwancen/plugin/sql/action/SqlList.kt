@@ -11,8 +11,6 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.vfs.newvfs.RefreshQueue
 import com.intellij.openapi.wm.WindowManager
 import io.github.linwancen.sql.DiffSql
-import io.github.linwancen.sql.bean.SqlInfo
-import io.github.linwancen.sql.bean.TableColumn
 import io.github.linwancen.sql.excel.SqlInfoWriter
 import io.github.linwancen.sql.parser.AllParser
 import io.github.linwancen.util.excel.ExcelUtils
@@ -51,16 +49,13 @@ open class SqlList : CopyAction() {
                 }
                 val sqlListDir = "${dir.canonicalPath ?: return}/sql-list"
                 val path = ExcelUtils.write(sqlListDir) { excelWriter: ExcelWriter ->
-                    val sql = ExcelUtils.sheet(excelWriter, "sql", SqlInfo::class.java)
-                    val table = ExcelUtils.sheet(excelWriter, "table", TableColumn::class.java)
-                    val column = ExcelUtils.sheet(excelWriter, "column", TableColumn::class.java)
+                    val sqlInfoWriter = SqlInfoWriter(excelWriter)
                     val fileList = files.mapNotNull { it.canonicalPath?.let { s -> File(s) } }.toList()
                     if (files.size == 2) {
-                        DiffSql.diffDir(fileList[0], fileList[1], false)
-                        { sqlInfo: List<SqlInfo?>? -> SqlInfoWriter.write(excelWriter, sqlInfo, sql, table, column) }
+                        DiffSql.diffDir(fileList[0], fileList[1], false, sqlInfoWriter::write)
                     } else {
                         val sqlInfos = AllParser.parse(fileList, null, git)
-                        SqlInfoWriter.write(excelWriter, sqlInfos, sql, table, column)
+                        sqlInfoWriter.write(sqlInfos)
                     }
 
                     val data = files.mapNotNull { it.canonicalPath?.let { s -> listOf(s) } }.toList()

@@ -3,7 +3,6 @@ package io.github.linwancen.sql;
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import io.github.linwancen.sql.bean.SqlInfo;
-import io.github.linwancen.sql.bean.TableColumn;
 import io.github.linwancen.sql.excel.SqlInfoWriter;
 import io.github.linwancen.sql.parser.AllParser;
 import io.github.linwancen.util.excel.ExcelUtils;
@@ -15,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -27,10 +28,8 @@ public class Main {
         boolean git = "true".equals(EnvUtils.get("git", null, "false"));
 
         ExcelUtils.write("out/sql-list", excelWriter -> {
-            WriteSheet sql = ExcelUtils.sheet(excelWriter, "sql", SqlInfo.class);
-            WriteSheet table = ExcelUtils.sheet(excelWriter, "table", TableColumn.class);
-            WriteSheet column = ExcelUtils.sheet(excelWriter, "column", TableColumn.class);
-            forArgs(args, sqlInfo -> SqlInfoWriter.write(excelWriter, sqlInfo, sql, table, column), git);
+            SqlInfoWriter sqlInfoWriter = new SqlInfoWriter(excelWriter);
+            forArgs(args, sqlInfoWriter::write, git);
 
             WriteSheet cmd = EasyExcelFactory.writerSheet("cmd").build();
             List<String> line = Collections.singletonList(String.join(" ", args));

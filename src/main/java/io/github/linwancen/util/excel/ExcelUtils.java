@@ -23,7 +23,7 @@ public class ExcelUtils {
             fun.accept(writer);
         }
         String path = outFile.getAbsolutePath().replace('\\', '/');
-        LOG.info("Excel：\tfile:///{}", path);
+        LOG.info("Excel:\tfile:///{}", path);
         return path;
     }
 

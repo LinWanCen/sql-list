@@ -5,8 +5,8 @@ import io.github.linwancen.sql.bean.TableColumn;
 import io.github.linwancen.sql.parser.jsqlparser.AddUtils;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.Table;
 
 import java.util.TreeMap;
 
@@ -30,5 +30,15 @@ public class WhereVisitor extends ExpressionVisitorAdapter {
     @Override
     public void visit(Column column) {
         AddUtils.addColumn(sqlInfo, column, map, columnUseType);
+    }
+
+    @Override
+    public void visit(EqualsTo expr) {
+        this.visitBinaryExpression(expr);
+        Expression left = expr.getLeftExpression();
+        Expression right = expr.getRightExpression();
+        if (left instanceof Column && right instanceof Column) {
+            AddUtils.addRel(sqlInfo, (Column) left, (Column) right);
+        }
     }
 }

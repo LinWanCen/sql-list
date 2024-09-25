@@ -19,15 +19,17 @@
 
 <!-- Plugin description -->
 
-Check and export MyBatis *.xml SQL to Excel With Git Author.
+Copy or export and check MyBatis *.xml SQL and Column Relationships to Excel and PlantUML With Git Author.
 
-检查 Mybatis *.xml 中的 SQL，涉及的表和条件列，Git 最后修改时间和作者，生成 Excel 表格。
+复制或导出并检查 Mybatis *.xml 中的 SQL，涉及的表和条件列关系，生成 Excel 表格、PlantUML 文件，包含 Git 最后修改时间和作者。
 
 ## How to Use
 
 - Select dir and right-click <kbd>Export MyBatis *.xml SQL</kbd>
 - Select two dir and right-click <kbd>Export Mybatis *.xml diff SQL</kbd>
 - Select MyBatis *.xml SQL and right-click <kbd>Copy MyBatis *.xml SQL</kbd>
+- Open File sql-list...xlsx or sql-list...puml by [Draw Graph] or [PlantUML Integration]
+- See [Jenkins.md][Jenkins]。
 
 ## My Plugin
 - Show doc comment in the Project view Tree, line End, JSON etc.: [Show Comment]
@@ -46,6 +48,7 @@ Check and export MyBatis *.xml SQL to Excel With Git Author.
 - 选择多个目录右键点击 <kbd>导出 Mybatis *.xml 的 SQL</kbd>
 - 选择SQL文本右键点击 <kbd>复制 Mybatis *.xml 的 SQL</kbd>
 - 选择两个目录右键点击 <kbd>导出 MyBatis *.xml 差异的 SQL</kbd>
+- 打开文件 sql-list...xlsx 或 sql-list...puml 用 [Draw Graph] 或 [PlantUML Integration]
 - 在服务器中用 Jenkins 运行详见 [Jenkins 使用方式指南][Jenkins]。
 
 ## 我的项目
@@ -70,6 +73,7 @@ Check and export MyBatis *.xml SQL to Excel With Git Author.
 [SQL List]: https://plugins.jetbrains.com/plugin/23142-sql-list
 [GitHub]: https://github.com/LinWanCen/sql-list
 [Jenkins]: https://github.com/LinWanCen/sql-list/blob/main/Jenkins.md
+[PlantUML Integration]: https://plugins.jetbrains.com/plugin/7017-plantuml-integration
 
 <!-- Plugin description end -->
 
