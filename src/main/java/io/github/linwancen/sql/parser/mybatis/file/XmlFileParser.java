@@ -6,7 +6,6 @@ import io.github.linwancen.sql.parser.log.SqlInfoLog;
 import io.github.linwancen.sql.parser.mybatis.file.sql.SqlParamBuilder;
 import io.github.linwancen.sql.parser.mybatis.file.sql.XmlChange;
 import io.github.linwancen.util.PathUtils;
-import io.github.linwancen.util.format.LineFormat;
 import io.github.linwancen.util.git.GitUtils;
 import io.github.linwancen.util.xml.JdomUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -27,6 +26,7 @@ import org.w3c.dom.Node;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class XmlFileParser {
         }
     }
 
-    private XmlFileParser(FileInputStream fis, Configuration configuration, File file, GitRootInfo gitRootInfo) {
+    public XmlFileParser(InputStream fis, Configuration configuration, File file, GitRootInfo gitRootInfo) {
         this.configuration = configuration;
         this.file = file;
         if (gitRootInfo != null) {
@@ -185,8 +185,6 @@ public class XmlFileParser {
                 sql = sql.trim();
                 if (!sql.isEmpty()) {
                     sql = sql.replace("?", "''");
-                    sql = LineFormat.itemsOneLine(sql);
-                    sql = LineFormat.deleteSpaceLine(sql);
                     sqlInfo.setSql(sql);
                 }
             } catch (Exception e) {

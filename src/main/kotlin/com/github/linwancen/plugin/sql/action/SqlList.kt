@@ -15,10 +15,12 @@ import io.github.linwancen.sql.excel.SqlInfoWriter
 import io.github.linwancen.sql.parser.AllParser
 import io.github.linwancen.util.excel.ExcelUtils
 import io.github.linwancen.util.git.GitUtils
+import org.slf4j.LoggerFactory
 import java.io.File
 
 
 open class SqlList : CopyAction() {
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     override fun update(e: AnActionEvent) {
         val files = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
@@ -38,6 +40,14 @@ open class SqlList : CopyAction() {
         val files = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
         object : Task.Backgroundable(project, "Export SQL ") {
             override fun run(indicator: ProgressIndicator) {
+                try {
+                    runTask()
+                } catch (e: Throwable) {
+                    log.info("SqlCopy catch Throwable but log to record.", e)
+                }
+            }
+
+            private fun runTask() {
                 GitUtils.utf8()
                 if (files.isEmpty()) {
                     return

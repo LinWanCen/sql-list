@@ -6,6 +6,7 @@ import io.github.linwancen.sql.bean.Rel;
 import io.github.linwancen.sql.bean.SqlInfo;
 import io.github.linwancen.sql.bean.TableColumn;
 import io.github.linwancen.util.excel.ExcelUtils;
+import io.github.linwancen.util.format.LineFormat;
 import io.github.linwancen.util.plantuml.PlantUML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +43,13 @@ public class SqlInfoWriter {
     }
 
     public void write(List<SqlInfo> sqlInfo) {
-        excelWriter.write(sqlInfo, sql);
         StringBuilder err = new StringBuilder();
         for (SqlInfo info : sqlInfo) {
+            String sqlStr = info.getSql();
+            sqlStr = LineFormat.itemsOneLine(sqlStr);
+            sqlStr = LineFormat.deleteSpaceLine(sqlStr);
+            info.setSql(sqlStr);
+
             for (TreeMap<String, TableColumn> map : info.getColumnList()) {
                 for (TableColumn v : map.values()) {
                     // column table null and one table use it
@@ -71,6 +76,7 @@ public class SqlInfoWriter {
 
             appendErr(info, err);
         }
+        excelWriter.write(sqlInfo, sql);
 
         File file = excelWriter.writeContext().writeWorkbookHolder().getFile();
         String path = file.getAbsolutePath();

@@ -31,4 +31,17 @@
             <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CompareTwoFiles"/>
         </action>
     </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection language="XML"
+                         shortName="XmlSql"
+                         bundle="messages.I18n"
+                         key="inspection.xml.sql.display.name"
+                         groupPath="SqlList"
+                         groupBundle="messages.I18n"
+                         groupKey="inspection.sql.list.group.key"
+                         enabledByDefault="true"
+                         level="WARNING"
+                         implementationClass="com.github.linwancen.plugin.sql.inspection.XmlSqlInspection"/>
+    </extensions>
 </idea-plugin>
