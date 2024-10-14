@@ -77,7 +77,7 @@ public class SqlParamBuilder {
         // bind
         String name = child.getStringAttribute("name");
         if (name != null) {
-            putKV(map, name, null);
+            putKV(map, name, "1");
         }
     }
 
@@ -135,9 +135,8 @@ public class SqlParamBuilder {
             return null;
         }
         // collection
-        ArrayList<Object> list = new ArrayList<Object>() {{
-            add(1);
-        }};
+        ArrayList<Object> list = new ArrayList<>();
+        list.add(1);
         Object subMap = map.putIfAbsent(split[lastIndex], list);
         if (subMap instanceof Map || subMap instanceof Collection) {
             return list;

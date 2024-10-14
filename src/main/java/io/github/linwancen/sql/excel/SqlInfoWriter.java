@@ -43,6 +43,7 @@ public class SqlInfoWriter {
 
     public void write(List<SqlInfo> sqlInfo) {
         excelWriter.write(sqlInfo, sql);
+        StringBuilder err = new StringBuilder();
         for (SqlInfo info : sqlInfo) {
             for (TreeMap<String, TableColumn> map : info.getColumnList()) {
                 for (TableColumn v : map.values()) {
@@ -67,7 +68,39 @@ public class SqlInfoWriter {
                 excelWriter.write(Collections.singleton(v), table);
             }
             columnRel.addAll(info.getColumnRel());
+
+            appendErr(info, err);
         }
+
+        File file = excelWriter.writeContext().writeWorkbookHolder().getFile();
+        String path = file.getAbsolutePath();
+        String pathPrefix = path.substring(0, path.lastIndexOf("."));
+
+        StringBuilder builder = buildPlantUml();
+        write(pathPrefix, ".puml", builder, "PlantUML");
+        write(pathPrefix, ".err.md", err, "Error");
+    }
+
+    private static void appendErr(SqlInfo info, StringBuilder err) {
+        String errStr = null;
+        if (info.getSqlErr() != null) {
+            errStr = info.getSqlErr();
+        } else if (info.getXmlErr() != null) {
+            errStr = info.getXmlErr();
+        }
+        if (errStr != null) {
+            err.append("### ").append(info.getLastAuthor())
+                    .append(".(").append(info.getLink()).append(") ")
+                    .append(info.getId()).append("\n");
+            err.append(errStr).append("\n");
+            if (info.getSql() != null) {
+                err.append("```sql\n").append(info.getSql()).append("\n```\n");
+            }
+            err.append("\n");
+        }
+    }
+
+    private StringBuilder buildPlantUml() {
         StringBuilder builder = new StringBuilder(PlantUML.start());
         columnRel.stream()
                 .sorted(Comparator.comparing(list -> list.get(0)))
@@ -80,18 +113,7 @@ public class SqlInfoWriter {
                     builder.append("\n").append(left).append(" --> ").append(right).append("\n");
                 });
         builder.append(PlantUML.end());
-
-
-        File file = excelWriter.writeContext().writeWorkbookHolder().getFile();
-        String path = file.getAbsolutePath();
-        String pathPrefix = path.substring(0, path.lastIndexOf("."));
-        File plantumlFile = new File(pathPrefix + ".puml");
-        try {
-            Files.write(plantumlFile.toPath(), builder.toString().getBytes(StandardCharsets.UTF_8));
-            LOG.info("PlantUML:\tfile:///{}.puml", pathPrefix.replace('\\', '/'));
-        } catch (IOException e) {
-            LOG.error("PlantUML write fail: ", e);
-        }
+        return builder;
     }
 
     private static void item(StringBuilder builder, String left) {
@@ -102,5 +124,15 @@ public class SqlInfoWriter {
         builder.append("\ncomponent ").append(left, 0, end).append(" {");
         builder.append("\ncomponent ").append(left).append(" as \"").append(left, end + 1, left.length()).append('"');
         builder.append("\n}");
+    }
+
+    private static void write(String pathPrefix, String ext, StringBuilder err, String tip) {
+        File errFile = new File(pathPrefix + ext);
+        try {
+            Files.write(errFile.toPath(), err.toString().getBytes(StandardCharsets.UTF_8));
+            LOG.info("{}:\tfile:///{}{}", tip, pathPrefix.replace('\\', '/'), ext);
+        } catch (IOException e) {
+            LOG.error("{} write fail: ", tip, e);
+        }
     }
 }

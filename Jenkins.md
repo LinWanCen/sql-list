@@ -31,5 +31,5 @@
       ```shell script
       mv file1 "1-$file1"
       mv file2 "2-$file2"
-      java -jar /var/lib/jenkins/workspace/sql-list/sql-list.jar -Dgit=true "1-$file1" "2-$file2"
+      java -jar /var/lib/jenkins/workspace/sql-list/sql-list.jar -Dgit=true diff "1-$file1" "2-$file2"
       ```
