@@ -46,8 +46,10 @@ public class SqlInfoWriter {
         StringBuilder err = new StringBuilder();
         for (SqlInfo info : sqlInfo) {
             String sqlStr = info.getSql();
-            sqlStr = LineFormat.itemsOneLine(sqlStr);
-            sqlStr = LineFormat.deleteSpaceLine(sqlStr);
+            if (sqlStr != null) {
+                sqlStr = LineFormat.itemsOneLine(sqlStr);
+                sqlStr = LineFormat.deleteSpaceLine(sqlStr);
+            }
             info.setSql(sqlStr);
 
             for (TreeMap<String, TableColumn> map : info.getColumnList()) {
@@ -136,7 +138,7 @@ public class SqlInfoWriter {
         File errFile = new File(pathPrefix + ext);
         try {
             Files.write(errFile.toPath(), err.toString().getBytes(StandardCharsets.UTF_8));
-            LOG.info("{}:\tfile:///{}{}", tip, pathPrefix.replace('\\', '/'), ext);
+            LOG.info("{}:\tfile:///{}{}\n", tip, pathPrefix.replace('\\', '/'), ext);
         } catch (IOException e) {
             LOG.error("{} write fail: ", tip, e);
         }
