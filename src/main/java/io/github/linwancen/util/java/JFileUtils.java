@@ -3,8 +3,10 @@ package io.github.linwancen.util.java;
 import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class JFileUtils {
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("\n");
 
     private JFileUtils() {}
 
@@ -14,7 +16,7 @@ public class JFileUtils {
         jFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         File lastSelectFile = new File("lastSelectFile.txt");
         if (lastSelectFile.exists()) {
-            String[] split = FileUtils.read(lastSelectFile).split("\n");
+            String[] split = SPLIT_PATTERN.split(FileUtils.read(lastSelectFile));
             if (split.length >= 2) {
                 jFileChooser.setCurrentDirectory(new File(split[0]));
                 ArrayList<File> files = new ArrayList<>();

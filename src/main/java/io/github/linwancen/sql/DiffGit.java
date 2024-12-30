@@ -3,26 +3,23 @@ package io.github.linwancen.sql;
 import io.github.linwancen.sql.bean.GitRootInfo;
 import io.github.linwancen.sql.bean.SqlInfo;
 import io.github.linwancen.sql.parser.AllParser;
-import io.github.linwancen.sql.parser.GitParser;
 import io.github.linwancen.util.git.GitUtils;
-import io.github.linwancen.util.java.TimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  *
  */
 public class DiffGit {
-    private static final Logger LOG = LoggerFactory.getLogger(DiffGit.class);
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("\\.\\.");
 
     public static void gitBetween(String[] args, Consumer<List<SqlInfo>> fun) {
-        String[] split = args[0].split("\\.\\.");
+        String[] split = SPLIT_PATTERN.split(args[0]);
         if (split.length != 2) {
             return;
         }

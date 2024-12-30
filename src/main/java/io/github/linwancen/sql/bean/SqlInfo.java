@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -29,6 +30,7 @@ public class SqlInfo {
     private String type;
     private String parameterType;
     private String resultMap;
+    private String resultType;
     @ColumnWidth(40)
     private String sql;
     /** TableName, TableExcelLine */
@@ -111,6 +113,31 @@ public class SqlInfo {
 
     public void setResultMap(String resultMap) {
         this.resultMap = resultMap;
+    }
+
+    public String getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
+    }
+
+    Pattern BASE_PATTERN = Pattern.compile("^java\\.|^(int|long|short|double|float|boolean|char|byte" +
+            "|String|map|integer|Integer|Long|Short|Double|Float|Boolean|Char|Byte)$");
+
+    public String getResultClass() {
+        if (resultType == null || BASE_PATTERN.matcher(resultType).find()) {
+            return null;
+        }
+        return resultType;
+    }
+
+    public String getParameterClass() {
+        if (parameterType == null || BASE_PATTERN.matcher(parameterType).find()) {
+            return null;
+        }
+        return parameterType;
     }
 
     public String getSql() {

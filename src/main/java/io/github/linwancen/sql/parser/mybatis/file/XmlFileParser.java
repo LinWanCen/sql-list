@@ -46,7 +46,9 @@ public class XmlFileParser {
     public final MapperBuilderAssistant assistant;
     public final XNode mapper;
     public final String namespace;
-    public final Map<String , LineNumberElement> lineMap = new HashMap<>();
+    public final Map<String, LineNumberElement> lineMap = new HashMap<>();
+    public final Map<String, String> resultMapMap = new HashMap<>();
+    public final Map<String, String> typeAliasMap = new HashMap<>();
 
     public static XmlFileParser build(Configuration configuration, File file, GitRootInfo gitRootInfo) {
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -100,8 +102,16 @@ public class XmlFileParser {
         Element rootElement = document.getRootElement();
         List<Element> children = rootElement.getChildren();
         for (Element child : children) {
-            String type = child.getName();
-            if (!SQL_TYPE_PATTERN.matcher(type).find()) {
+            String name = child.getName();
+            switch (name) {
+                case "resultMap":
+                    resultMapMap.put(child.getAttributeValue("id"), child.getAttributeValue("type"));
+                    continue;
+                case "typeAlias":
+                    typeAliasMap.put(child.getAttributeValue("alias"), child.getAttributeValue("type"));
+                    continue;
+            }
+            if (!SQL_TYPE_PATTERN.matcher(name).find()) {
                 continue;
             }
             String id = child.getAttributeValue("id");
@@ -169,7 +179,18 @@ public class XmlFileParser {
                 sqlInfo.setNamespace(namespace);
                 sqlInfo.setType(xmlSQL.getName());
                 sqlInfo.setParameterType(xmlSQL.getStringAttribute("parameterType"));
-                sqlInfo.setResultMap(xmlSQL.getStringAttribute("resultMap"));
+
+                String resultMap = xmlSQL.getStringAttribute("resultMap");
+                if (resultMap != null) {
+                    sqlInfo.setResultMap(resultMap);
+                    sqlInfo.setResultType(resultMapMap.get(resultMap));
+                } else {
+                    sqlInfo.setResultType(xmlSQL.getStringAttribute("resultType"));
+                }
+                String type = typeAliasMap.get(sqlInfo.getResultType());
+                if (type != null) {
+                    sqlInfo.setResultType(type);
+                }
 
                 XMLIncludeTransformer transformer = new XMLIncludeTransformer(configuration, assistant);
                 Node node = xmlSQL.getNode();

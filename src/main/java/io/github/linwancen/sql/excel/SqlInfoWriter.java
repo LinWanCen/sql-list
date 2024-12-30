@@ -2,6 +2,7 @@ package io.github.linwancen.sql.excel;
 
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import io.github.linwancen.sql.bean.Dto;
 import io.github.linwancen.sql.bean.Rel;
 import io.github.linwancen.sql.bean.SqlInfo;
 import io.github.linwancen.sql.bean.TableColumn;
@@ -18,7 +19,9 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -32,7 +35,9 @@ public class SqlInfoWriter {
     private final WriteSheet table;
     private final WriteSheet column;
     private final WriteSheet rel;
+    private final WriteSheet dto;
     private final Set<List<String>> columnRel = new HashSet<>();
+    private final Map<String, String> dtoMap = new LinkedHashMap<>();
 
     public SqlInfoWriter(ExcelWriter excelWriter) {
         this.excelWriter = excelWriter;
@@ -40,6 +45,7 @@ public class SqlInfoWriter {
         table = ExcelUtils.sheet(excelWriter, "table", TableColumn.class);
         column = ExcelUtils.sheet(excelWriter, "column", TableColumn.class);
         rel = ExcelUtils.sheet(excelWriter, "rel", Rel.class);
+        dto = ExcelUtils.sheet(excelWriter, "dto", Dto.class);
     }
 
     public void write(List<SqlInfo> sqlInfo) {
@@ -52,12 +58,23 @@ public class SqlInfoWriter {
             }
             info.setSql(sqlStr);
 
+            String oneTableName = null;
+            if (info.getTableMap().size() == 1) {
+                oneTableName = info.getTableMap().keySet().iterator().next();
+                String parameterClass = info.getParameterClass();
+                if (parameterClass != null) {
+                    dtoMap.putIfAbsent(parameterClass, oneTableName);
+                }
+                String resultClass = info.getResultClass();
+                if (resultClass != null) {
+                    dtoMap.put(resultClass, oneTableName);
+                }
+            }
             for (TreeMap<String, TableColumn> map : info.getColumnList()) {
                 for (TableColumn v : map.values()) {
                     // column table null and one table use it
-                    if (v.getTable() == null && info.getTableMap().size() == 1) {
-                        String tableName = info.getTableMap().keySet().iterator().next();
-                        v.setTable(tableName);
+                    if (v.getTable() == null && oneTableName != null) {
+                        v.setTable(oneTableName);
                     }
                     excelWriter.write(Collections.singleton(v), column);
 
@@ -78,6 +95,7 @@ public class SqlInfoWriter {
 
             appendErr(info, err);
         }
+        dtoMap.forEach((clazz, table) -> excelWriter.write(Collections.singleton(new Dto(clazz, table)), dto));
         excelWriter.write(sqlInfo, sql);
 
         File file = excelWriter.writeContext().writeWorkbookHolder().getFile();

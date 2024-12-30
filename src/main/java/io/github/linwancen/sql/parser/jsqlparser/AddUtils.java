@@ -86,8 +86,11 @@ public class AddUtils {
             return null;
         } else {
             String aliasName = table.getName();
-            String mapName = aliasName == null ? null : sqlInfo.getAliasMap().get(aliasName);
-            return mapName == null ? aliasName : mapName;
+            if (aliasName == null) {
+                return null;
+            }
+            String mapName = sqlInfo.getAliasMap().get(aliasName);
+            return mapName != null ? mapName : aliasName.replace("`", "");
         }
     }
 }
