@@ -32,12 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 public class XmlFileParser {
     private static final Logger LOG = LoggerFactory.getLogger(XmlFileParser.class);
     private static final XMLMapperEntityResolver MAPPER_ENTITY_RESOLVER = new XMLMapperEntityResolver();
-    public static final Pattern SQL_TYPE_PATTERN = Pattern.compile("select|update|insert|delete");
 
     public final Configuration configuration;
     public final File file;
@@ -111,12 +109,11 @@ public class XmlFileParser {
                     typeAliasMap.put(child.getAttributeValue("alias"), child.getAttributeValue("type"));
                     continue;
             }
-            if (!SQL_TYPE_PATTERN.matcher(name).find()) {
-                continue;
-            }
             String id = child.getAttributeValue("id");
-            LineNumberElement lineNumberElement = (LineNumberElement) child;
-            lineMap.put(id, lineNumberElement);
+            if (id != null) {
+                LineNumberElement lineNumberElement = (LineNumberElement) child;
+                lineMap.put(id, lineNumberElement);
+            }
         }
     }
 
@@ -172,45 +169,9 @@ public class XmlFileParser {
         }
         for (XNode xmlSQL : sqlList) {
             SqlInfo sqlInfo = new SqlInfo();
-            try {
-                String id = xmlSQL.getStringAttribute("id");
-                // line
-                addLine(sqlInfo, id);
-                sqlInfo.setNamespace(namespace);
-                sqlInfo.setType(xmlSQL.getName());
-                sqlInfo.setParameterType(xmlSQL.getStringAttribute("parameterType"));
-
-                String resultMap = xmlSQL.getStringAttribute("resultMap");
-                if (resultMap != null) {
-                    sqlInfo.setResultMap(resultMap);
-                    sqlInfo.setResultType(resultMapMap.get(resultMap));
-                } else {
-                    sqlInfo.setResultType(xmlSQL.getStringAttribute("resultType"));
-                }
-                String type = typeAliasMap.get(sqlInfo.getResultType());
-                if (type != null) {
-                    sqlInfo.setResultType(type);
-                }
-
-                XMLIncludeTransformer transformer = new XMLIncludeTransformer(configuration, assistant);
-                Node node = xmlSQL.getNode();
-                transformer.applyIncludes(node);
-                XmlChange.deleteSelectKey(node);
-                Map<Object, Object> map = SqlParamBuilder.tagKey(xmlSQL);
-                XmlChange.putKeyAndDeleteCallMethod(node, map);
-
-                XMLScriptBuilder xml = new XMLScriptBuilder(configuration, xmlSQL);
-                SqlSource source = xml.parseScriptNode();
-                BoundSql boundSql = source.getBoundSql(map);
-                String sql = boundSql.getSql();
-                sql = sql.trim();
-                if (!sql.isEmpty()) {
-                    sql = sql.replace("?", "''");
-                    sqlInfo.setSql(sql);
-                }
-            } catch (Exception e) {
-                String msg = SqlInfoLog.msg("getBoundSql", sqlInfo, e, true);
-                LOG.warn(msg);
+            Map<Object, Object> map = buildParamMap(xmlSQL, sqlInfo);
+            if (map != null) {
+                buildSql(xmlSQL, map, sqlInfo);
             }
             try {
                 if (!fun.apply(sqlInfo)) {
@@ -220,6 +181,58 @@ public class XmlFileParser {
                 String msg = SqlInfoLog.msg("parserSql fun.accept", sqlInfo, e, true);
                 LOG.warn(msg);
             }
+        }
+    }
+
+    private Map<Object, Object> buildParamMap(XNode xmlSQL, SqlInfo sqlInfo) {
+        try {
+            String id = xmlSQL.getStringAttribute("id");
+            // line
+            addLine(sqlInfo, id);
+            sqlInfo.setNamespace(namespace);
+            sqlInfo.setType(xmlSQL.getName());
+            sqlInfo.setParameterType(xmlSQL.getStringAttribute("parameterType"));
+
+            String resultMap = xmlSQL.getStringAttribute("resultMap");
+            if (resultMap != null) {
+                sqlInfo.setResultMap(resultMap);
+                sqlInfo.setResultType(resultMapMap.get(resultMap));
+            } else {
+                sqlInfo.setResultType(xmlSQL.getStringAttribute("resultType"));
+            }
+            String type = typeAliasMap.get(sqlInfo.getResultType());
+            if (type != null) {
+                sqlInfo.setResultType(type);
+            }
+
+            XMLIncludeTransformer transformer = new XMLIncludeTransformer(configuration, assistant);
+            Node node = xmlSQL.getNode();
+            transformer.applyIncludes(node);
+            XmlChange.deleteSelectKey(node);
+            Map<Object, Object> map = SqlParamBuilder.tagKey(xmlSQL);
+            XmlChange.putKeyAndDeleteCallMethod(node, map);
+            return map;
+        } catch (Exception e) {
+            String msg = SqlInfoLog.msg("buildParamMap", sqlInfo, e, true);
+            LOG.warn(msg);
+            return null;
+        }
+    }
+
+    private void buildSql(XNode xmlSQL, Map<Object, Object> map, SqlInfo sqlInfo) {
+        try {
+            XMLScriptBuilder xml = new XMLScriptBuilder(configuration, xmlSQL);
+            SqlSource source = xml.parseScriptNode();
+            BoundSql boundSql = source.getBoundSql(map);
+            String sql = boundSql.getSql();
+            sql = sql.trim();
+            if (!sql.isEmpty()) {
+                sql = sql.replace("?", "''");
+                sqlInfo.setSql(sql);
+            }
+        } catch (Exception e) {
+            String msg = SqlInfoLog.msg("getBoundSql", sqlInfo, e, true);
+            LOG.warn(msg);
         }
     }
 }

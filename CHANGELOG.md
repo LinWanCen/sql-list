@@ -4,6 +4,7 @@
 
 ## [1.0.0]
 
+- 2.07 ★ load ext doc (See Show Comment Plugin Demo)
 - 2.06 Bean to table
 - 2.05 ignore id in ignore.sql-list.txt
 - 2.04 MyBatis *.xml SQL inspection
@@ -14,6 +15,7 @@
 
 # 中文更新日志
 
+- 2.07 ★ 加载外部注释 (参考 Show Comment 插件示例)
 - 2.06 Bean 对应表
 - 2.05 忽略 ignore.sql-list.txt 中的 id
 - 2.04 MyBatis *.xml SQL 实时检查

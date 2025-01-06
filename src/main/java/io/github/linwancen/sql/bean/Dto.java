@@ -10,15 +10,20 @@ import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 @HeadStyle(wrapped = BooleanEnum.FALSE, horizontalAlignment = HorizontalAlignmentEnum.LEFT)
 @HeadFontStyle(fontHeightInPoints = 11, bold = BooleanEnum.FALSE, fontName = "宋体")
 public class Dto {
-    public Dto(String className, String tableName) {
-        this.className = className;
-        this.tableName = tableName;
-    }
-
     @ColumnWidth(50)
     private String className;
-    @ColumnWidth(50)
+    @ColumnWidth(25)
     private String tableName;
+    @ColumnWidth(25)
+    private String tableComment;
+
+    public static Dto of(String className, String tableName, String tableComment) {
+        Dto dto = new Dto();
+        dto.className = className;
+        dto.tableName = tableName;
+        dto.tableComment = tableComment;
+        return dto;
+    }
 
     public String getClassName() {
         return className;
@@ -34,5 +39,13 @@ public class Dto {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public String getTableComment() {
+        return tableComment;
+    }
+
+    public void setTableComment(String tableComment) {
+        this.tableComment = tableComment;
     }
 }

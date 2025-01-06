@@ -20,6 +20,8 @@ public class TableColumn {
     private String type;
     @ColumnWidth(25)
     private String table;
+    @ColumnWidth(25)
+    private String tableComment;
     @ExcelIgnore
     private final LinkedHashSet<String> columnUseTypeSet = new LinkedHashSet<>();
     @ColumnWidth(15)
@@ -29,6 +31,8 @@ public class TableColumn {
     private final LinkedHashSet<String> columnSet = new LinkedHashSet<>();
     @ColumnWidth(25)
     private String column;
+    @ColumnWidth(25)
+    private String columnComment;
 
     public String getFullId() {
         return namespace + "." + id;
@@ -70,6 +74,14 @@ public class TableColumn {
         this.table = table;
     }
 
+    public String getTableComment() {
+        return tableComment;
+    }
+
+    public void setTableComment(String tableComment) {
+        this.tableComment = tableComment;
+    }
+
     public LinkedHashSet<String> getColumnUseTypeSet() {
         return columnUseTypeSet;
     }
@@ -108,5 +120,13 @@ public class TableColumn {
 
     public void setColumn(String column) {
         this.column = column;
+    }
+
+    public String getColumnComment() {
+        return columnComment;
+    }
+
+    public void setColumnComment(String columnComment) {
+        this.columnComment = columnComment;
     }
 }

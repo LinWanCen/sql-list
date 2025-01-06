@@ -39,6 +39,8 @@ public class SqlInfo {
     @SuppressWarnings("FieldCanBeLocal")
     @ColumnWidth(25)
     private String table;
+    @ColumnWidth(25)
+    private String tableComment;
     /** ColumnName, ColumnExcelLine */
     @ExcelIgnore
     private final List<TreeMap<String, TableColumn>> columnList = new ArrayList<>();
@@ -46,7 +48,7 @@ public class SqlInfo {
     private String column;
     /** tableName.Column ---  */
     @ExcelIgnore
-    private final Set<List<String>> columnRel = new HashSet<>();
+    private final Set<Rel> columnRel = new HashSet<>();
     /** gitRootInfo.startDate != null && gitRootInfo.endDate != null */
     private Date inDate;
     @ExcelIgnore
@@ -66,6 +68,12 @@ public class SqlInfo {
     private String sqlErr;
     @ExcelIgnore
     private final Map<String, String> aliasMap = new HashMap<>();
+
+    public static SqlInfo of(String sql) {
+        SqlInfo sqlInfo = new SqlInfo();
+        sqlInfo.sql = sql;
+        return sqlInfo;
+    }
 
     public String getFullId() {
         return namespace + "." + id;
@@ -156,6 +164,14 @@ public class SqlInfo {
         return String.join(", ", tableMap.keySet());
     }
 
+    public String getTableComment() {
+        return tableComment;
+    }
+
+    public void setTableComment(String tableComment) {
+        this.tableComment = tableComment;
+    }
+
     public List<TreeMap<String, TableColumn>> getColumnList() {
         return columnList;
     }
@@ -167,7 +183,7 @@ public class SqlInfo {
                 .collect(Collectors.joining("\n"));
     }
 
-    public Set<List<String>> getColumnRel() {
+    public Set<Rel> getColumnRel() {
         return columnRel;
     }
 

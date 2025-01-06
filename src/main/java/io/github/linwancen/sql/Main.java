@@ -5,6 +5,7 @@ import com.alibaba.excel.write.metadata.WriteSheet;
 import io.github.linwancen.sql.bean.SqlInfo;
 import io.github.linwancen.sql.excel.SqlInfoWriter;
 import io.github.linwancen.sql.parser.AllParser;
+import io.github.linwancen.sql.parser.jsqlparser.JSqlParser;
 import io.github.linwancen.util.excel.ExcelUtils;
 import io.github.linwancen.util.git.GitUtils;
 import io.github.linwancen.util.java.EnvUtils;
@@ -14,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -56,6 +59,16 @@ public class Main {
             DiffGit.gitBetween(args, fun);
         } else if ("diff".equals(first)) {
             DiffSql.diff(args, fun, git);
+        }  else if ("load".equals(first)) {
+            List<String> list;
+            try {
+                list = Files.readAllLines(new File(args[1]).toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            List<SqlInfo> sqlInfoList = list.parallelStream().map(SqlInfo::of).collect(Collectors.toList());
+            sqlInfoList.forEach(JSqlParser::parseSQL);
+            fun.accept(sqlInfoList);
         } else {
             List<File> files = Arrays.stream(args).parallel()
                     .map(File::new)

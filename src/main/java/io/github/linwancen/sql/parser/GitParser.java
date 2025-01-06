@@ -1,5 +1,6 @@
 package io.github.linwancen.sql.parser;
 
+import io.github.linwancen.sql.bean.GitRootInfo;
 import io.github.linwancen.sql.bean.SqlInfo;
 import io.github.linwancen.util.git.GitUtils;
 import org.slf4j.Logger;
@@ -14,7 +15,11 @@ public class GitParser {
     private static final Logger LOG = LoggerFactory.getLogger(GitParser.class);
 
     public static void parseLast(SqlInfo sqlInfo) {
-        File gitRoot = sqlInfo.getGitRootInfo().getGitRoot();
+        GitRootInfo gitRootInfo = sqlInfo.getGitRootInfo();
+        if (gitRootInfo == null) {
+            return;
+        }
+        File gitRoot = gitRootInfo.getGitRoot();
         if (sqlInfo.getLastDate() != null) {
             return;
         }
@@ -29,8 +34,8 @@ public class GitParser {
                         sqlInfo.setLastAuthor(m.group(2));
                     }
                     if (sqlInfo.getInDate() == null) {
-                        Date startDate = sqlInfo.getGitRootInfo().getStartDate();
-                        Date endDate = sqlInfo.getGitRootInfo().getEndDate();
+                        Date startDate = gitRootInfo.getStartDate();
+                        Date endDate = gitRootInfo.getEndDate();
                         if (!(startDate == null && endDate == null)) {
                             boolean afterStart = startDate == null || (date.after(startDate) || date.equals(startDate));
                             boolean beforeEndDate = endDate == null || (date.before(endDate) || date.equals(endDate));

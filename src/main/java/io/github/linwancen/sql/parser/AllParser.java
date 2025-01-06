@@ -2,6 +2,7 @@ package io.github.linwancen.sql.parser;
 
 import io.github.linwancen.sql.bean.GitRootInfo;
 import io.github.linwancen.sql.bean.SqlInfo;
+import io.github.linwancen.sql.parser.comment.SqlComment;
 import io.github.linwancen.sql.parser.jsqlparser.JSqlParser;
 import io.github.linwancen.sql.parser.log.SqlInfoLog;
 import io.github.linwancen.sql.parser.mybatis.MapperFileFinder;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class AllParser {
     private static final Logger LOG = LoggerFactory.getLogger(AllParser.class);
@@ -22,18 +24,20 @@ public class AllParser {
         List<SqlInfo> sqlInfoList = new ArrayList<>();
         long t1 = System.currentTimeMillis();
 
-        List<File> ignoreFileList = new ArrayList<>();
-        List<File> mapperFileList = new ArrayList<>();
-        MapperFileFinder.findMapperFileList(files, mapperFileList, ignoreFileList);
-        LOG.info("ignoreFileList size {}\n", ignoreFileList.size());
-        SqlInfoLog.loadAndAddIgnore(ignoreFileList);
-        LOG.info("mapperFileList size {}\n", mapperFileList.size());
-        new MyBatisParser().parser(mapperFileList, gitRootInfo, sqlInfoList::add);
+        Map<String, List<File>> map = MapperFileFinder.findMapperFileList(files);
+        SqlInfoLog.loadAndAddIgnore(map.get(MapperFileFinder.IGNORE));
+        new MyBatisParser().parser(map.get(MapperFileFinder.XML), gitRootInfo, sqlInfoList::add);
         long t2 = System.currentTimeMillis();
         LOG.info("sql size {}\n", sqlInfoList.size());
         LOG.info("MyBatisParser use {}\n", TimeUtils.useTime(t2 - t1));
 
-        sqlInfoList.parallelStream().forEach(JSqlParser::parseSQL);
+        List<File> tableCommentFiles = map.get(MapperFileFinder.TABLE_COMMENT);
+        List<File> columnCommentFiles = map.get(MapperFileFinder.COLUMN_COMMENT);
+        SqlComment sqlComment = SqlComment.of(tableCommentFiles, columnCommentFiles);
+        sqlInfoList.parallelStream().forEach(sqlInfo -> {
+            JSqlParser.parseSQL(sqlInfo);
+            sqlComment.add(sqlInfo);
+        });
         long t3 = System.currentTimeMillis();
         LOG.info("SqlParser use {}\n", TimeUtils.useTime(t3 - t2));
 

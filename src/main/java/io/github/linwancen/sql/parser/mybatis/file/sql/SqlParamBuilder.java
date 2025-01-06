@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class SqlParamBuilder {
     public static final Pattern BOOLEAN_PATTERN = Pattern.compile("^[\\w.]++$");
-    public static final Pattern EQUAL_PATTERN = Pattern.compile("([\\w.]++|'[^']++') *([=!]=) *([\\w.]++|'[^']++')");
+    public static final Pattern EQUAL_PATTERN = Pattern.compile("([\\w.]++|'[^']++')(?:[(][)])? *([=!]=) *([\\w.]++|'[^']++')");
     public static final Pattern GELE_PATTERN = Pattern.compile("([\\w.]++|'[^']++') *[<>]=? *([\\w.]++|'[^']++')");
     public static final Pattern SPLIT_PATTERN = Pattern.compile("\\.");
 
@@ -110,6 +110,12 @@ public class SqlParamBuilder {
         }
         String[] split = SPLIT_PATTERN.split(key);
         int lastIndex = split.length - 1;
+        String name = split[lastIndex];
+        if (split.length > 1 && ("name".equals(name) || "length".equals(name))) {
+            o = name.length() == 4 ? null : new String[]{"1"};
+            lastIndex--;
+            name = split[lastIndex];
+        }
         for (int i = 0; i < lastIndex; i++) {
             Object subMap = map.putIfAbsent(split[i], new HashMap<>());
             if (subMap instanceof List) {
@@ -131,17 +137,21 @@ public class SqlParamBuilder {
         }
         // not collection
         if (o != null) {
-            map.putIfAbsent(split[lastIndex], o);
+            if (o instanceof String[]) {
+                map.put(name, o);
+            } else {
+                map.putIfAbsent(name, o);
+            }
             return null;
         }
         // collection
         ArrayList<Object> list = new ArrayList<>();
         list.add(1);
-        Object subMap = map.putIfAbsent(split[lastIndex], list);
-        if (subMap instanceof Map || subMap instanceof Collection) {
+        Object subMap = map.putIfAbsent(name, list);
+        if (subMap instanceof Map || subMap instanceof Collection || subMap instanceof String[]) {
             return list;
         }
-        map.put(split[lastIndex], list);
+        map.put(name, list);
         return list;
     }
 }

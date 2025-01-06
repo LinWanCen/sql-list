@@ -20,6 +20,9 @@ public class SqlInfoLog {
     private static final Map<String, String> ignoreIdMap = new ConcurrentHashMap<>();
 
     public static void loadAndAddIgnore(List<File> files) {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
         ignoreIdMap.clear();
         files.parallelStream().forEach(file -> {
             try {
@@ -41,7 +44,8 @@ public class SqlInfoLog {
      */
     public static String msg(String name, SqlInfo sqlInfo, Exception e, boolean inXml) {
         if (ignoreIdMap.containsKey(sqlInfo.getFullId())) {
-            return name + " ignore fail: " + sqlInfo.getFullId() + "\n";
+            return name + " ignore fail: " + sqlInfo.getFullId()
+                    + "\n file:///" + PathUtils.canonicalPath(sqlInfo.getFile()) + "\n";
         }
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
@@ -58,11 +62,14 @@ public class SqlInfoLog {
             }
             StringBuilder sb = new StringBuilder(name).append(" fail:\n");
             msg = addExceptionMsg(sqlInfo, e, inXml, sb, msg);
-            GitParser.parseLast(sqlInfo);
-            sb.append(sqlInfo.getLastAuthor()).append(' ');
-            sb.append(".(").append(sqlInfo.getFile().getName()).append(':').append(sqlInfo.getStartLine()).append(") ");
-            sb.append(sqlInfo.getId()).append("\n");
-            sb.append("file:///").append(PathUtils.canonicalPath(sqlInfo.getFile())).append("\n");
+            File file = sqlInfo.getFile();
+            if (file != null) {
+                GitParser.parseLast(sqlInfo);
+                sb.append(sqlInfo.getLastAuthor()).append(' ');
+                sb.append(".(").append(file.getName()).append(':').append(sqlInfo.getStartLine()).append(") ");
+                sb.append(sqlInfo.getId()).append("\n");
+                sb.append("file:///").append(PathUtils.canonicalPath(file)).append("\n");
+            }
 
             String sql = sqlInfo.getSql();
             if (sql == null) {

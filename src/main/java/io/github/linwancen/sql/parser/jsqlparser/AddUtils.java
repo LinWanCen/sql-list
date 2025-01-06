@@ -1,12 +1,12 @@
 package io.github.linwancen.sql.parser.jsqlparser;
 
+import io.github.linwancen.sql.bean.Rel;
 import io.github.linwancen.sql.bean.SqlInfo;
 import io.github.linwancen.sql.bean.TableColumn;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 
-import java.util.Arrays;
 import java.util.TreeMap;
 
 public class AddUtils {
@@ -49,7 +49,7 @@ public class AddUtils {
             return;
         }
         String tableName = tableName(sqlInfo, column);
-        String columnName = column.getColumnName();
+        String columnName = column.getColumnName().replace("`", "");
         String tableColumnName = tableName == null ? columnName : tableName + "." + columnName;
         map.computeIfAbsent(tableColumnName, k -> {
             TableColumn tableColumn = new TableColumn();
@@ -64,23 +64,15 @@ public class AddUtils {
     }
 
     public static void addRel(SqlInfo sqlInfo, Column left, Column right) {
-        String tableNameL = tableName(sqlInfo, left);
-        String tableNameR = tableName(sqlInfo, right);
-        String columnNameL = left.getColumnName();
-        String columnNameR = right.getColumnName();
-        String tableColumnNameL = tableNameL == null ? columnNameL : tableNameL + "." + columnNameL;
-        String tableColumnNameR = tableNameR == null ? columnNameR : tableNameR + "." + columnNameR;
-        tableColumnNameL = tableColumnNameL.toLowerCase();
-        tableColumnNameR = tableColumnNameR.toLowerCase();
-        int compare = tableColumnNameL.compareTo(tableColumnNameR);
-        if (compare < 0) {
-            sqlInfo.getColumnRel().add(Arrays.asList(tableColumnNameL, tableColumnNameR));
-        } else if (compare > 0) {
-            sqlInfo.getColumnRel().add(Arrays.asList(tableColumnNameR, tableColumnNameL));
+        String tableL = tableName(sqlInfo, left);
+        String tableR = tableName(sqlInfo, right);
+        Rel rel = Rel.sortRelOrNull(tableL, left.getColumnName(), tableR, right.getColumnName());
+        if (rel != null) {
+            sqlInfo.getColumnRel().add(rel);
         }
     }
 
-    private static String tableName(SqlInfo sqlInfo, Column column) {
+    public static String tableName(SqlInfo sqlInfo, Column column) {
         Table table = column.getTable();
         if (table == null) {
             return null;
@@ -90,7 +82,10 @@ public class AddUtils {
                 return null;
             }
             String mapName = sqlInfo.getAliasMap().get(aliasName);
-            return mapName != null ? mapName : aliasName.replace("`", "");
+            if (mapName != null) {
+                return mapName;
+            }
+            return aliasName.replace("`", "");
         }
     }
 }
