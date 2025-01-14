@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.util.ui.TextTransferable
 import io.github.linwancen.sql.parser.mybatis.file.XmlFileParser
+import io.github.linwancen.util.format.LineFormat
 import org.apache.ibatis.session.Configuration
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -49,8 +50,10 @@ open class SqlCopy : CopyAction() {
                 parser.parserSqlFragments()
                 parser.parserSql {
                     if (it.startLine <= line && line <= it.endLine) {
-                        val text = it.sql ?: it.xmlErr ?: it.sqlErr ?: return@parserSql false
-                        CopyPasteManager.getInstance()?.setContents(TextTransferable(text as CharSequence))
+                        var sqlStr = it.sql ?: it.xmlErr ?: it.sqlErr ?: return@parserSql false
+                        sqlStr = LineFormat.itemsOneLine(sqlStr)
+                        sqlStr = LineFormat.deleteSpaceLine(sqlStr)
+                        CopyPasteManager.getInstance()?.setContents(TextTransferable(sqlStr as CharSequence))
                         WindowManager.getInstance()?.getStatusBar(project)?.info = "Copy SQL for ${it.fullId}"
                         false
                     } else true
